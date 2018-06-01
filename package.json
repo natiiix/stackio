@@ -1,0 +1,29 @@
+{
+  "name": "stackio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "start": "npm run build && electron ./dist/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/natiiix/stackio.git"
+  },
+  "author": "natiiix",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/natiiix/stackio/issues"
+  },
+  "homepage": "https://github.com/natiiix/stackio#readme",
+  "dependencies": {
+    "electron": "^2.0.2"
+  },
+  "devDependencies": {
+    "tslint": "^5.10.0",
+    "typescript": "^2.9.1"
+  }
+}
