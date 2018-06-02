@@ -3,19 +3,46 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>StackIO</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
 </head>
 
 <body>
-    <h1>StackIO</h1>
+    <nav>
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo center">StackIO</a>
+        </div>
+    </nav>
 
-    <textarea id="code">This is the code box.</textarea>
     <br>
-    <button id="run">Run</button>
-    <br>
-    <textarea id="output" readonly>This is the output box.</textarea>
+
+    <div class="container">
+        <div class="input-field">
+            <textarea id="code" class="materialize-textarea monospace">This is the code box.</textarea>
+            <label for="code">Code</label>
+        </div>
+
+        <!-- <div class="input-field">
+            <textarea id="output" class="materialize-textarea monospace" readonly>This is the output box.</textarea>
+            <label for="output">Output</label>
+        </div> -->
+
+        <blockquote id="output" class="monospace"></blockquote>
+
+        <a id="run" class="waves-effect waves-light btn-large">Run</a>
+    </div>
+
+    <script type="text/javascript" src="../dist/renderer.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+
+    <style>
+        .monospace {
+            font-family: monospace;
+        }
+    </style>
 </body>
-
-<script type="text/javascript" src="../dist/renderer.js"></script>
 
 </html>
