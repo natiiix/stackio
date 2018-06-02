@@ -1,10 +1,11 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
+import { Runner } from "./Runner";
 
 let mainWindow: Electron.BrowserWindow;
 
 ipcMain.on('run-code', (event: Electron.Event, code: string) => {
-    event.sender.send('print-output', code)
+    (new Runner(code)).run(x => event.sender.send('append-output', x));
 });
 
 function createWindow() {

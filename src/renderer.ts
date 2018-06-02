@@ -1,7 +1,7 @@
 const { ipcRenderer } = require('electron');
 
-ipcRenderer.on('print-output', (event: Electron.Event, str: string) =>
-    document.getElementById('output').innerHTML = str.replace(/\n/g, '<br>')
+ipcRenderer.on('append-output', (event: Electron.Event, str: string) =>
+    document.getElementById('output').innerHTML += str.replace(/\n/g, '<br>')
 );
 
 document.getElementById('run').addEventListener('click', (e) => {
