@@ -2,8 +2,9 @@
 // https://github.com/google/ts-style/blob/master/tslint.json
 //
 // Modifications:
-// - Explicit access modifiers required
 // - Added one-line rule
+// - Require explicit access modifier
+// - Require single quotes for string literals unless there is a good reason not to use them
 {
     "rules": {
         "array-type": [
@@ -96,6 +97,12 @@
             "allow-named-functions"
         ],
         "prefer-const": true,
+        "quotemark": [
+            true,
+            "single",
+            "avoid-escape",
+            "avoid-template"
+        ],
         "radix": true,
         "semicolon": [
             true,
