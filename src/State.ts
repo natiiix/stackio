@@ -22,7 +22,7 @@ export class State {
      * @param index Index of requested stack element.
      * @returns Returns the value of requested stack element.
      */
-    public get(index: number): number {
+    public get(index = -1): number {
         return this.stack[this.toAbsIdx(index)];
     }
 
