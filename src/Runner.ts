@@ -110,6 +110,43 @@ export class Runner {
                         performOperation(state, (bottom, top) => bottom % top);
                         break;
 
+                    // MARK <Mark ID>
+                    case 'mark':
+                        {
+                            if (!tokenEnum.moveNext()) {
+                                throw new UnexpectedTokenError(token);
+                            }
+
+                            const markId = tokenEnum.current.value;
+                            state.marks[markId] = tokenEnum.index;
+                        }
+                        break;
+
+                    // JUMP <Mark ID>
+                    case 'jump':
+                        {
+                            if (!tokenEnum.moveNext()) {
+                                throw new UnexpectedTokenError(token);
+                            }
+
+                            const markId = tokenEnum.current.value;
+                            tokenEnum.index = state.marks[markId];
+                        }
+                        break;
+
+                    // IF
+                    case 'if':
+                        if (state.get() === 0) {
+                            if (!tokenEnum.moveNext()) {
+                                throw new UnexpectedTokenError(token);
+                            }
+
+                            if (['mark', 'jump'].indexOf(tokenEnum.current.type.toLowerCase()) >= 0 && !tokenEnum.moveNext()) {
+                                throw new UnexpectedTokenError(token);
+                            }
+                        }
+                        break;
+
                     // Unrecognized symbol value
                     default:
                         throw new UnexpectedTokenError(token);

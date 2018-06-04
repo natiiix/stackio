@@ -9,10 +9,16 @@ export class State {
     private stack: number[];
 
     /**
+     * Dictionary of marks.
+     */
+    public marks: { [id: string]: number };
+
+    /**
      * Constructs a state with an empty stack.
      */
     public constructor() {
         this.stack = [];
+        this.marks = {};
     }
 
     /**
