@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Runner } from './Runner';
 import { readFile, writeFile } from 'fs';
 
-const CODE_FILE = path.join(app.getAppPath(), 'code.sio');
+const CODE_FILE = path.join(app.getPath('documents'), 'code.sio');
 
 let mainWindow: Electron.BrowserWindow;
 
