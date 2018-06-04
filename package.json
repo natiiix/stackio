@@ -22,11 +22,9 @@
         "url": "https://github.com/natiiix/stackio/issues"
     },
     "homepage": "https://github.com/natiiix/stackio#readme",
-    "dependencies": {
-        "electron": "^2.0.2"
-    },
     "devDependencies": {
         "@types/materialize-css": "^1.0.3",
+        "electron": "^2.0.2",
         "electron-packager": "^12.1.0",
         "tslint": "^5.10.0",
         "typescript": "^2.9.1"
