@@ -1,11 +1,22 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import { Runner } from './Runner';
+import { readFile, writeFile } from 'fs';
+
+const CODE_FILE = path.join(app.getAppPath(), 'code.sio');
 
 let mainWindow: Electron.BrowserWindow;
 
 ipcMain.on('run-code', (event: Electron.Event, code: string) => {
     (new Runner(code, x => event.sender.send('append-output', x))).run();
+});
+
+ipcMain.on('load-code', (event: Electron.Event) => {
+    readFile(CODE_FILE, (err, data) => event.sender.send('change-code', data.toString()));
+});
+
+ipcMain.on('save-code', (event: Electron.Event, code: string) => {
+    writeFile(CODE_FILE, code, logIfErr);
 });
 
 function createWindow() {
@@ -52,5 +63,8 @@ app.on('activate', () => {
     }
 });
 
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.
+function logIfErr(err: Error): void {
+    if (err) {
+        console.error(err);
+    }
+}
