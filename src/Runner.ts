@@ -55,6 +55,51 @@ export class Runner {
                         this.print(state.get().toString());
                         break;
 
+                    // POP
+                    case 'pop':
+                        state.pop();
+                        break;
+
+                    // SWAP
+                    case 'swap':
+                        {
+                            const a = state.pop();
+                            const b = state.pop();
+                            state.push(a);
+                            state.push(b);
+                        }
+                        break;
+
+                    // TAKE
+                    case 'take':
+                        state.push(state.get(state.get()));
+                        break;
+
+                    // ADD
+                    case 'add':
+                        performOperation(state, (bottom, top) => bottom + top);
+                        break;
+
+                    // SUBTRACT
+                    case 'sub':
+                        performOperation(state, (bottom, top) => bottom - top);
+                        break;
+
+                    // MULTIPLY
+                    case 'mul':
+                        performOperation(state, (bottom, top) => bottom * top);
+                        break;
+
+                    // DIVIDE
+                    case 'div':
+                        performOperation(state, (bottom, top) => bottom / top);
+                        break;
+
+                    // MODULO
+                    case 'mod':
+                        performOperation(state, (bottom, top) => bottom % top);
+                        break;
+
                     // Unrecognized symbol value
                     default:
                         throw new UnexpectedTokenError(token);
@@ -72,4 +117,12 @@ class UnexpectedTokenError extends Error {
     public constructor(token: Token) {
         super(`Unexpected token { type: ${token.type}, value: ${token.value}}`);
     }
+}
+
+function performOperation(state: State, operation: (bottom: number, top: number) => number): void {
+    const top = state.pop();
+    const bottom = state.pop();
+
+    const result = operation(bottom, top);
+    state.push(result);
 }
