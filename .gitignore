@@ -62,3 +62,6 @@ typings/
 
 # tsc build output
 dist/
+
+# electron-packager build output
+bin/

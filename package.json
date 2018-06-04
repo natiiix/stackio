@@ -1,30 +1,34 @@
 {
-  "name": "stackio",
-  "version": "1.0.0",
-  "description": "",
-  "main": "./dist/main.js",
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "lint": "tslint -c tslint.json -p tsconfig.json",
-    "start": "npm run build && electron ./dist/main.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/natiiix/stackio.git"
-  },
-  "author": "natiiix",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/natiiix/stackio/issues"
-  },
-  "homepage": "https://github.com/natiiix/stackio#readme",
-  "dependencies": {
-    "electron": "^2.0.2"
-  },
-  "devDependencies": {
-    "@types/materialize-css": "^1.0.3",
-    "tslint": "^5.10.0",
-    "typescript": "^2.9.1"
-  }
+    "name": "stackio",
+    "version": "1.0.0",
+    "description": "",
+    "main": "./dist/main.js",
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "lint": "tslint -c tslint.json -p tsconfig.json",
+        "start": "npm run build && electron ./dist/main.js",
+        "package-mac": "npm run build && electron-packager . --overwrite --platform=darwin --arch=x64 --out=bin/",
+        "package-win": "npm run build && electron-packager . --overwrite --platform=win32 --arch=x64 --out=bin/",
+        "package-linux": "npm run build && electron-packager . --overwrite --platform=linux --arch=x64 --out=bin/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/natiiix/stackio.git"
+    },
+    "author": "natiiix",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/natiiix/stackio/issues"
+    },
+    "homepage": "https://github.com/natiiix/stackio#readme",
+    "dependencies": {
+        "electron": "^2.0.2"
+    },
+    "devDependencies": {
+        "@types/materialize-css": "^1.0.3",
+        "electron-packager": "^12.1.0",
+        "tslint": "^5.10.0",
+        "typescript": "^2.9.1"
+    }
 }
