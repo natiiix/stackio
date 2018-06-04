@@ -28,21 +28,17 @@ export class Runner {
         const num = Number(instr);
 
         // Empty line or a comment
-        if (instr.length === 0 || instr[0] === '#') {
-            return;
-        }
+        if (instr.length === 0 || instr[0] === '#') { }
         // If the instruction is a valid numeric value
         else if (!isNaN(num)) {
             // Push the number onto the stack
             state.push(num);
-            return;
         }
         // If the instruction is a string literal
-        if (instr.length > 2 && instr[0] === '"' && instr[instr.length - 1] === '"') {
+        else if (instr.length > 2 && instr[0] === '"' && instr[instr.length - 1] === '"') {
             // Print the value of string string
             // Replace "\n" with actual new line characters
             this.print(instr.substr(1, instr.length - 2).replace(/\\n/g, '\n'));
-            return;
         }
         // Word instructions
         else {
