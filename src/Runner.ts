@@ -60,6 +60,16 @@ export class Runner {
                         state.pop();
                         break;
 
+                    // CLONE
+                    case 'clone':
+                        state.push(state.get());
+                        break;
+
+                    // COUNT
+                    case 'count':
+                        state.push(state.stackSize);
+                        break;
+
                     // SWAP
                     case 'swap':
                         {
