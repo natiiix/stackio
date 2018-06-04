@@ -57,4 +57,12 @@ export class State {
     public pop(): number {
         return this.stack.pop();
     }
+
+    /**
+     * Retrieves the number of elements on the stack and returns it.
+     * @returns Returns the number of elements on the stack.
+     */
+    public get stackSize(): number {
+        return this.stack.length;
+    }
 }
