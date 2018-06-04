@@ -5,7 +5,7 @@ import { Runner } from './Runner';
 let mainWindow: Electron.BrowserWindow;
 
 ipcMain.on('run-code', (event: Electron.Event, code: string) => {
-    (new Runner(code)).run(x => event.sender.send('append-output', x));
+    (new Runner(code, x => event.sender.send('append-output', x))).run();
 });
 
 function createWindow() {
