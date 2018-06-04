@@ -1,61 +1,75 @@
 import { State } from './State';
+import { lex, Token } from './lexer';
+import { BetterEnumerator } from './BetterEnumerator';
 
 export class Runner {
-    private readonly operations: string[];
+    private readonly tokens: Token[];
     private readonly print: (message: string) => void;
 
     public constructor(code: string, printCallback: (message: string) => void) {
-        // One operation per line
-        this.operations = code.split('\n');
+        this.tokens = lex(code);
         this.print = printCallback;
     }
 
     public run(): void {
-        // Create a new state (empty stack, instruction counter set to 0)
+        // Create a new state with an empty stack
         const state = new State();
 
-        // Execute instruction until the program runs to the end
-        while (state.counter < this.operations.length) {
-            this.executeInstruction(state);
-        }
+        // Create an enumerator for the tokens
+        const tokenEnum = new BetterEnumerator(this.tokens);
+
+        // Program execution loop
+        do {
+            this.executeInstruction(state, tokenEnum);
+        } while (tokenEnum.moveNext());
     }
 
-    private executeInstruction(state: State): void {
-        // Get the current instruction
-        const instr = this.operations[state.counter];
+    private executeInstruction(state: State, tokenEnum: BetterEnumerator<Token>): void {
+        // Get the current token
+        const token = tokenEnum.current;
 
-        // Try to convert the instruction into a number
-        const num = Number(instr);
+        switch (token.type) {
+            // Numberic value
+            case 'number':
+                {
+                    const num = Number(token.value);
 
-        // Empty line or a comment
-        if (instr.length === 0 || instr[0] === '#') { }
-        // If the instruction is a valid numeric value
-        else if (!isNaN(num)) {
-            // Push the number onto the stack
-            state.push(num);
+                    if (isNaN(num)) {
+                        throw new UnexpectedTokenError(token);
+                    }
+
+                    state.push(num);
+                }
+                break;
+
+            // String literal
+            case 'string':
+                this.print(token.value);
+                break;
+
+            // Symbol
+            case 'symbol':
+                switch (token.value.toLowerCase()) {
+                    // PRINT
+                    case 'print':
+                        this.print(state.get().toString());
+                        break;
+
+                    // Unrecognized symbol value
+                    default:
+                        throw new UnexpectedTokenError(token);
+                }
+                break;
+
+            // Unrecognized token type
+            default:
+                throw new UnexpectedTokenError(token);
         }
-        // If the instruction is a string literal
-        else if (instr.length > 2 && instr[0] === '"' && instr[instr.length - 1] === '"') {
-            // Print the value of string string
-            // Replace "\n" with actual new line characters
-            this.print(instr.substr(1, instr.length - 2).replace(/\\n/g, '\n'));
-        }
-        // Word instructions
-        else {
-            switch (instr.toLowerCase()) {
-                // PRINT
-                case 'print':
-                    this.print(state.get().toString());
-                    break;
+    }
+}
 
-                // Unrecognized instruction
-                default:
-                    // Throw an error
-                    throw Error(`Invalid instruction on line ${state.counter + 1}: ${instr}`);
-            }
-        }
-
-        // Increment the instruction counter
-        state.counter++;
+class UnexpectedTokenError extends Error {
+    public constructor(token: Token) {
+        super(`Unexpected token { type: ${token.type}, value: ${token.value}}`);
     }
 }

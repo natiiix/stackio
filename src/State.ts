@@ -4,12 +4,6 @@
  */
 export class State {
     /**
-     * Instruction counter.
-     * Contains the index of the instruction to be executed next.
-     */
-    public counter: number;
-
-    /**
      * The stack.
      */
     private stack: number[];
@@ -18,7 +12,6 @@ export class State {
      * Constructs a state with an empty stack.
      */
     public constructor() {
-        this.counter = 0;
         this.stack = [];
     }
 
