@@ -1,10 +1,24 @@
+/**
+ * Class that holds information about the state
+ * of the StackIO interpreter.
+ */
 export class State {
+    /**
+     * Instruction counter.
+     * Contains the index of the instruction to be executed next.
+     */
+    public counter: number;
+
+    /**
+     * The stack.
+     */
     private stack: number[];
 
     /**
      * Constructs a state with an empty stack.
      */
     public constructor() {
+        this.counter = 0;
         this.stack = [];
     }
 
