@@ -18,8 +18,16 @@ export class Runner {
         // Create an enumerator for the tokens
         const tokenEnum = new BetterEnumerator(this.tokens);
 
+        // Get start time
+        const startTime = Date.now();
+
         // Program execution loop
         do {
+            // The maximum allowed program execution time is 1 second
+            if (Date.now() - startTime > 1000) {
+                throw Error('1 second elapsed, check for an infinite loop');
+            }
+
             this.executeInstruction(state, tokenEnum);
         } while (tokenEnum.moveNext());
     }
@@ -134,17 +142,30 @@ export class Runner {
                         }
                         break;
 
-                    // IF
-                    case 'if':
-                        if (state.get() === 0) {
-                            if (!tokenEnum.moveNext()) {
-                                throw new UnexpectedTokenError(token);
-                            }
-
-                            if (['mark', 'jump'].indexOf(tokenEnum.current.type.toLowerCase()) >= 0 && !tokenEnum.moveNext()) {
-                                throw new UnexpectedTokenError(token);
-                            }
+                    // IF ZERO
+                    case 'if_zero':
+                        if (state.get() !== 0) {
+                            skipNextInstruction(tokenEnum);
                         }
+                        break;
+
+                    // IF POSITIVE
+                    case 'if_pos':
+                        if (state.get() <= 0) {
+                            skipNextInstruction(tokenEnum);
+                        }
+                        break;
+
+                    // IF NEGATIVE
+                    case 'if_neg':
+                        if (state.get() >= 0) {
+                            skipNextInstruction(tokenEnum);
+                        }
+                        break;
+
+                    // EXIT
+                    case 'exit':
+                        tokenEnum.moveLast();
                         break;
 
                     // Unrecognized symbol value
@@ -172,4 +193,16 @@ function performOperation(state: State, operation: (bottom: number, top: number)
 
     const result = operation(bottom, top);
     state.push(result);
+}
+
+function skipNextInstruction(tokenEnum: BetterEnumerator<Token>): void {
+    if (!tokenEnum.moveNext()) {
+        throw new UnexpectedTokenError(tokenEnum.current);
+    }
+
+    if (tokenEnum.current.type === 'symbol' &&
+        ['mark', 'jump'].indexOf(tokenEnum.current.value.toLowerCase()) >= 0 &&
+        !tokenEnum.moveNext()) {
+        throw new UnexpectedTokenError(tokenEnum.current);
+    }
 }
