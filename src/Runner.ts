@@ -12,6 +12,8 @@ export class Runner {
         this.tokens = lex(code);
 
         // Extract labels
+        this.labels = {};
+
         this.tokens.forEach((x, i) => {
             if (x.type !== 'label') {
                 return;
