@@ -90,7 +90,7 @@ export class Runner {
 
                     // TAKE
                     case 'take':
-                        state.push(state.get(state.get()));
+                        state.push(state.get(state.pop()));
                         break;
 
                     // ADD
