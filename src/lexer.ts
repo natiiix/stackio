@@ -10,6 +10,8 @@ export class Token {
     }
 }
 
+const REGEX_IGNORE = /^\s$/;
+
 const REGEX_SYMBOL_FIRST = /^[a-zA-Z_]$/;
 const REGEX_SYMBOL_NEXT = /^\w$/;
 
@@ -19,7 +21,9 @@ const REGEX_NUMBER_NEXT = /^[\d\.]$/;
 const REGEX_COMMENT_FIRST = /^#$/;
 const REGEX_COMMENT_NEXT = /^[^\n]$/;
 
-const REGEX_IGNORE = /^\s$/;
+const REGEX_LABEL_DEFINITION_FIRST = /^:$/;
+const REGEX_LABEL_JUMP_FIRST = /^@$/;
+const REGEX_LABEL_NAME = /^\w$/;
 
 export function lex(code: string): Token[] {
     const tokens: Token[] = [];
@@ -28,22 +32,38 @@ export function lex(code: string): Token[] {
     while (true) {
         const c = codeEnum.current;
 
-        if (REGEX_SYMBOL_FIRST.test(c)) {
-            tokens.push(new Token('symbol', readToEnd(codeEnum, REGEX_SYMBOL_NEXT)));
-        }
-        else if (REGEX_NUMBER_FIRST.test(c)) {
-            tokens.push(new Token('number', readToEnd(codeEnum, REGEX_NUMBER_NEXT)));
-        }
-        else if (c === '"') {
-            tokens.push(new Token('string', readStringLiteral(codeEnum)));
-        }
+        // Ignored character
+        if (REGEX_IGNORE.test(c)) { }
+        // Line comment
         else if (REGEX_COMMENT_FIRST.test(c)) {
             readToEnd(codeEnum, REGEX_COMMENT_NEXT);
         }
-        else if (!REGEX_IGNORE.test(c)) {
+        // Symbol
+        else if (REGEX_SYMBOL_FIRST.test(c)) {
+            tokens.push(new Token('symbol', readToEnd(codeEnum, REGEX_SYMBOL_NEXT)));
+        }
+        // Number
+        else if (REGEX_NUMBER_FIRST.test(c)) {
+            tokens.push(new Token('number', readToEnd(codeEnum, REGEX_NUMBER_NEXT)));
+        }
+        // Label definition
+        else if (REGEX_LABEL_DEFINITION_FIRST.test(c)) {
+            tokens.push(new Token('label', readToEnd(codeEnum, REGEX_LABEL_NAME).substr(1)));
+        }
+        // Jump instruction
+        else if (REGEX_LABEL_JUMP_FIRST.test(c)) {
+            tokens.push(new Token('jump', readToEnd(codeEnum, REGEX_LABEL_NAME).substr(1)));
+        }
+        // String literal
+        else if (c === '"') {
+            tokens.push(new Token('string', readStringLiteral(codeEnum)));
+        }
+        // Invalid syntax
+        else {
             throw Error('Unexpected syntax: ' + c);
         }
 
+        // Move on to the next character
         if (!codeEnum.moveNext()) {
             break;
         }
