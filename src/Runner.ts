@@ -4,10 +4,27 @@ import { BetterEnumerator } from './BetterEnumerator';
 
 export class Runner {
     private readonly tokens: Token[];
+    private readonly labels: { [label: string]: number };
     private readonly print: (message: string) => void;
 
     public constructor(code: string, printCallback: (message: string) => void) {
+        // Tokenize the code
         this.tokens = lex(code);
+
+        // Extract labels
+        this.tokens.forEach((x, i) => {
+            if (x.type !== 'label') {
+                return;
+            }
+
+            if (this.labels.hasOwnProperty(x.value)) {
+                throw Error(`Multiple definitions of label \"${x.value}\"`);
+            }
+
+            this.labels[x.value] = i;
+        });
+
+        // Store the print function callback
         this.print = printCallback;
     }
 
@@ -25,7 +42,7 @@ export class Runner {
         do {
             // The maximum allowed program execution time is 1 second
             if (Date.now() - startTime > 1000) {
-                throw Error('1 second elapsed, check for an infinite loop');
+                throw Error('1 second elapsed, please check for an infinite loop');
             }
 
             this.executeInstruction(state, tokenEnum);
@@ -37,6 +54,20 @@ export class Runner {
         const token = tokenEnum.current;
 
         switch (token.type) {
+            // Label definition
+            case 'label':
+                break;
+
+            // Label jump
+            case 'jump':
+                if (this.labels.hasOwnProperty(token.value)) {
+                    tokenEnum.index = this.labels[token.value];
+                }
+                else {
+                    throw Error(`Unable to jump to an undefined label \"${token.value}\"`);
+                }
+                break;
+
             // Numberic value
             case 'number':
                 {
@@ -118,48 +149,24 @@ export class Runner {
                         performOperation(state, (bottom, top) => bottom % top);
                         break;
 
-                    // MARK <Mark ID>
-                    case 'mark':
-                        {
-                            if (!tokenEnum.moveNext()) {
-                                throw new UnexpectedTokenError(token);
-                            }
-
-                            const markId = tokenEnum.current.value;
-                            state.marks[markId] = tokenEnum.index;
-                        }
-                        break;
-
-                    // JUMP <Mark ID>
-                    case 'jump':
-                        {
-                            if (!tokenEnum.moveNext()) {
-                                throw new UnexpectedTokenError(token);
-                            }
-
-                            const markId = tokenEnum.current.value;
-                            tokenEnum.index = state.marks[markId];
-                        }
-                        break;
-
                     // IF ZERO
                     case 'if_zero':
                         if (state.get() !== 0) {
-                            skipNextInstruction(tokenEnum);
+                            tokenEnum.index++;
                         }
                         break;
 
                     // IF POSITIVE
                     case 'if_pos':
                         if (state.get() <= 0) {
-                            skipNextInstruction(tokenEnum);
+                            tokenEnum.index++;
                         }
                         break;
 
                     // IF NEGATIVE
                     case 'if_neg':
                         if (state.get() >= 0) {
-                            skipNextInstruction(tokenEnum);
+                            tokenEnum.index++;
                         }
                         break;
 
@@ -193,16 +200,4 @@ function performOperation(state: State, operation: (bottom: number, top: number)
 
     const result = operation(bottom, top);
     state.push(result);
-}
-
-function skipNextInstruction(tokenEnum: BetterEnumerator<Token>): void {
-    if (!tokenEnum.moveNext()) {
-        throw new UnexpectedTokenError(tokenEnum.current);
-    }
-
-    if (tokenEnum.current.type === 'symbol' &&
-        ['mark', 'jump'].indexOf(tokenEnum.current.value.toLowerCase()) >= 0 &&
-        !tokenEnum.moveNext()) {
-        throw new UnexpectedTokenError(tokenEnum.current);
-    }
 }
